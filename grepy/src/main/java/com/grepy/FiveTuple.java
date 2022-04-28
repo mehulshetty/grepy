@@ -6,16 +6,16 @@ import java.util.Iterator;
 
 public class FiveTuple {
     private Integer state = 0;
+    private String stateTracker = "0";
 
     private static ArrayList<Character> alphabet = new ArrayList<Character>();
     private ArrayList<String[]> delta = new ArrayList<String[]>();
     private Integer startState = 0;
-    private ArrayList<String> acceptingStates;
+    private String acceptingStates;
 
     public FiveTuple (String fileName) {
         this.setAlphabet(fileName);
     }
-    
 
     public Integer getState() {
         return state;
@@ -46,12 +46,13 @@ public class FiveTuple {
     }
     public void setStartState(String startState) {
         this.startState = Integer.parseInt(startState);
+        this.stateTracker = startState;
     }
-    public ArrayList<String> getAcceptingStates() {
+    public String getAcceptingStates() {
         return acceptingStates;
     }
-    public void setAcceptingStates(ArrayList<String> acceptingStates) {
-        this.acceptingStates = acceptingStates;
+    public void setAcceptingStates(String acceptingState) {
+        this.acceptingStates = acceptingState;
     }
 
     public void removeDelta(String[] remElem) {

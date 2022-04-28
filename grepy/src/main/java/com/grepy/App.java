@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Hello world!
@@ -44,14 +46,56 @@ public final class App {
         // for(String line: lines) {
         //     System.out.println("\nLINES: " + line);
         // }
-
-        String[] matches = checkNFA(fiveTuple, lines);
         
     }
 
-    public static String[] checkNFA(FiveTuple nfaTuple, String[] lines) {
-        return null;
+    public static DFA nfaToDfa(FiveTuple nfaTuple) {
+        DFA dfaTuple = new DFA(nfaTuple);
+        ArrayList<String[]> nfaDelta = nfaTuple.getDelta();
+        String currentState = nfaTuple.getStartState();
+        String nextState = "";
+        Queue<String> statesQueue = new PriorityQueue<String>();
+
+        String newStartState = epsilonStates(currentState, nfaTuple);
+        statesQueue.add(newStartState);
+
+        while(statesQueue.peek() != null) {
+            String[] deltaItem = new String[3];
+            deltaItem[0] = statesQueue.peek();
+            String[] statesToCheck = statesQueue.poll().split(",", 0); // s,f
+            for(String stateToCheck: statesToCheck) {
+                nextState += epsilonStates(stateToCheck, nfaTuple);
+            }
+
+            dfaTuple.setDelta(deltaItem);
+        }
+
+        return dfaTuple;
     }
+
+    public static String epsilonStates (String stateToCheck, FiveTuple nfaTuple) { // s,nfaTuple
+        Queue<String> epsilonQueue = new PriorityQueue<String>();
+        ArrayList<String[]> nfaDelta = nfaTuple.getDelta();
+        String epsilonStates = stateToCheck;
+        epsilonQueue.add(stateToCheck);
+
+        while(epsilonQueue.peek() != null) {
+            Iterator<String[]> itr = nfaDelta.iterator();
+            while(itr.hasNext()) {
+                String[] itrItem = itr.next();
+                if(itrItem[0] == epsilonQueue.peek()) {
+                    if(itrItem[1] == "eps") {
+                        epsilonStates += "," + itrItem[2];
+                        epsilonQueue.add(itrItem[2]);
+                    }
+                }
+            }
+            epsilonQueue.poll();
+        }
+
+        return epsilonStates;
+    }
+
 
     public static void regexToNFA(FiveTuple nfaTuple, String regex) {
         ArrayList<Character> alphabet = nfaTuple.getAlphabet();
@@ -143,6 +187,7 @@ public final class App {
                 break;
             }
         }
+        nfaTuple.setAcceptingStates(Integer.toString(nfaTuple.getState()));
 
         System.out.println("\nDELTA: ");
         printArrayList(nfaTuple.getDelta());
@@ -182,4 +227,16 @@ public final class App {
         }
     }
 
+    /*
+    public static String[] checkNFA(FiveTuple nfaTuple, String[] lines) {
+        for(String line: lines) {
+            for(int i = 0; i < line.length(); i++) {
+                String currentLetter = Character.toString(line.charAt(i));
+
+            }
+        }
+
+        return null;
+    }
+    */
 }
