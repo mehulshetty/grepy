@@ -46,13 +46,21 @@ public class FiveTuple {
     }
     public void setStartState(String startState) {
         this.startState = Integer.parseInt(startState);
-        this.stateTracker = startState;
+        setStateTracker(startState);
     }
     public String getAcceptingStates() {
         return acceptingStates;
     }
     public void setAcceptingStates(String acceptingState) {
         this.acceptingStates = acceptingState;
+    }
+
+    public String getStateTracker() {
+        return stateTracker;
+    }
+
+    public void setStateTracker(String stateTracker) {
+        this.stateTracker = stateTracker;
     }
 
     public void removeDelta(String[] remElem) {

@@ -107,7 +107,7 @@ public final class App {
                     String nextStateString = String.join(",", nextStatesArray);
 
 
-                    System.out.println("\nHERE" + type(nextStatesArray).toString());
+                    // System.out.println("\nHERE" + type(nextStatesArray).toString());
 
                     String[] deltaData = {currentState, alphaString, nextStateString};
                     dfaTuple.setDelta(deltaData);
