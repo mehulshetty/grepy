@@ -41,6 +41,8 @@ public final class App {
         fiveTuple.getAlphabet();
         regexToNFA(fiveTuple, args[0]);
 
+        DFA dfaTuple = nfaToDfa(fiveTuple);
+
         String[] lines = fileReader(args[1]);
 
         // for(String line: lines) {
@@ -51,32 +53,96 @@ public final class App {
 
     public static DFA nfaToDfa(FiveTuple nfaTuple) {
         DFA dfaTuple = new DFA(nfaTuple);
-        ArrayList<String[]> nfaDelta = nfaTuple.getDelta();
-        String currentState = nfaTuple.getStartState();
-        String nextState = "";
-        Queue<String> statesQueue = new PriorityQueue<String>();
+        ArrayList<Character> alphabet = dfaTuple.getAlphabet(); // a,b,c,n,j,k
+        ArrayList<String[]> nfaDelta = nfaTuple.getDelta(); // [0,a,1], [1,b,2]
+        String currentState = nfaTuple.getStartState(); // 0
+        Queue<String[]> statesQueue = new PriorityQueue<String[]>(); // ["0"]
+        ArrayList<String> statesList = new ArrayList<String>(); // "0",
 
-        String newStartState = epsilonStates(currentState, nfaTuple);
+        String[] newStartState = epsilonStates(currentState, nfaTuple); // 0
+        String stateString = String.join(",", newStartState); // 0
+        statesList.add(stateString);
+        dfaTuple.setStartState(stateString); // startState = "0"
         statesQueue.add(newStartState);
 
+        currentState = stateString;
+
         while(statesQueue.peek() != null) {
-            String[] deltaItem = new String[3];
-            deltaItem[0] = statesQueue.peek();
-            String[] statesToCheck = statesQueue.poll().split(",", 0); // s,f
-            for(String stateToCheck: statesToCheck) {
-                nextState += epsilonStates(stateToCheck, nfaTuple);
+            String[] currentStateArray = statesQueue.peek(); // ["0"]
+
+            for(int count = 0; count < alphabet.size(); count++) {
+
+                ArrayList<String> nextStates = new ArrayList<String>(); // ["1"]
+                String alphaString = Character.toString(alphabet.get(count)); // "a"
+                System.out.println("\n" + alphaString);
+
+                for(String state: currentStateArray) {
+                    Iterator<String[]> itr = nfaDelta.iterator();
+                    while(itr.hasNext()) {
+                        String[] itrItem = itr.next();
+                        if(itrItem[0].equals(state) && itrItem[1].equals(alphaString) && !nextStates.contains(itrItem[2])) {
+                            nextStates.add(itrItem[2]);
+                        }
+                    }
+                }
+
+                if(!nextStates.isEmpty()) {
+                    for(String stateToCheck: nextStates) {
+                        String[] newEpsilonStates = epsilonStates(stateToCheck, nfaTuple);
+                        if(newEpsilonStates != null) {
+                            for(String newEpsilonState: newEpsilonStates) {
+                                if(!nextStates.contains(newEpsilonState)) {
+                                    nextStates.add(newEpsilonState);
+                                }
+                            }
+                        }
+                    }
+                
+                    String[] nextStatesArray = new String[nextStates.size()];
+                    for(int i = 0; i < nextStates.size(); i++) {
+                        nextStatesArray[i] = nextStates.get(i);
+                    }
+
+                    Arrays.sort(nextStatesArray);
+                    String nextStateString = String.join(",", nextStatesArray);
+
+
+                    System.out.println("\nHERE" + type(nextStatesArray).toString());
+
+                    String[] deltaData = {currentState, alphaString, nextStateString};
+                    dfaTuple.setDelta(deltaData);
+
+                    if(!statesList.contains(nextStateString)) {
+                        statesList.add(nextStateString);
+                    }
+
+                    statesQueue.add(nextStatesArray);
+                }
+                else {
+                    String[] trapDelta = {currentState, alphaString, "TRAP"};
+                    dfaTuple.setDelta(trapDelta);
+                }
             }
 
-            dfaTuple.setDelta(deltaItem);
+            statesQueue.poll();
+
+            if(statesQueue.peek() != null) {
+                currentState = String.join(",", currentStateArray);
+            }
+
         }
+
+        System.out.println("\nDELTA: ");
+        printArrayList(dfaTuple.getDelta());
 
         return dfaTuple;
     }
 
-    public static String epsilonStates (String stateToCheck, FiveTuple nfaTuple) { // s,nfaTuple
+    public static String[] epsilonStates (String stateToCheck, FiveTuple nfaTuple) { // s,nfaTuple
         Queue<String> epsilonQueue = new PriorityQueue<String>();
         ArrayList<String[]> nfaDelta = nfaTuple.getDelta();
-        String epsilonStates = stateToCheck;
+        ArrayList<String> epsilonStates = new ArrayList<String>();
+        epsilonStates.add(stateToCheck);
         epsilonQueue.add(stateToCheck);
 
         while(epsilonQueue.peek() != null) {
@@ -85,17 +151,27 @@ public final class App {
                 String[] itrItem = itr.next();
                 if(itrItem[0] == epsilonQueue.peek()) {
                     if(itrItem[1] == "eps") {
-                        epsilonStates += "," + itrItem[2];
-                        epsilonQueue.add(itrItem[2]);
+                        if(!epsilonStates.contains(itrItem[2])) {
+                            epsilonStates.add(itrItem[2]);
+                            epsilonQueue.add(itrItem[2]);
+                        }
                     }
                 }
             }
             epsilonQueue.poll();
         }
 
-        return epsilonStates;
-    }
+        String[] epsilonStatesArray = new String[epsilonStates.size()];
+        for(int i = 0; i < epsilonStates.size(); i++) {
+            epsilonStatesArray[i] = epsilonStates.get(i);
+        }
 
+        Arrays.sort(epsilonStatesArray);
+
+        System.out.println("\nDELTA: " + Arrays.toString(epsilonStatesArray));
+
+        return epsilonStatesArray;
+    }
 
     public static void regexToNFA(FiveTuple nfaTuple, String regex) {
         ArrayList<Character> alphabet = nfaTuple.getAlphabet();

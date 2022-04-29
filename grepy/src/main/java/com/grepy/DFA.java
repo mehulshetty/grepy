@@ -32,7 +32,7 @@ public class DFA {
         this.stateTracker = stateTracker;
     }
 
-    public static ArrayList<Character> getAlphabet() {
+    public ArrayList<Character> getAlphabet() {
         return alphabet;
     }
 
