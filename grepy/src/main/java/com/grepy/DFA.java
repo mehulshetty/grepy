@@ -1,8 +1,5 @@
 package com.grepy;
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 
 public class DFA {
     private String state;
@@ -10,7 +7,7 @@ public class DFA {
     private static ArrayList<Character> alphabet = new ArrayList<Character>();
     private ArrayList<String[]> delta = new ArrayList<String[]>();
     private String startState;
-    private String[] acceptingStates;
+    private ArrayList<String> acceptingStates = new ArrayList<String>();;
 
     public DFA (FiveTuple nfaTuple) {
         alphabet = nfaTuple.getAlphabet();
@@ -56,11 +53,11 @@ public class DFA {
         this.startState = startState;
     }
 
-    public String[] getAcceptingStates() {
+    public ArrayList<String> getAcceptingStates() {
         return acceptingStates;
     }
 
-    public void setAcceptingStates(String[] acceptingStates) {
-        this.acceptingStates = acceptingStates;
+    public void setAcceptingStates(String acceptingState) {
+        this.acceptingStates.add(acceptingState);
     }
 }
