@@ -175,6 +175,8 @@ public final class App {
             }
         }
 
+        System.out.println("\n YUPPP" + nfaTuple.getAcceptingStates().toString());
+
 
         System.out.println("\nDELTA1: ");
         printArrayList(dfaTuple.getDelta());
@@ -242,7 +244,8 @@ public final class App {
                     Integer nextState = currentState - 1;
                     String[] deltaItem = {currentState.toString(), "eps", nextState.toString()};
                     nfaTuple.setDelta(deltaItem);
-
+                    
+                    System.out.println("\nGRRRRR: " + Integer.toString(currentState) + " | " + Integer.toString(nextState) + " | " + Arrays.toString(deltaItem));
                     nfaTuple.setAcceptingStates(Integer.toString(nextState));
 
                     // System.out.println("\n*");
@@ -314,7 +317,6 @@ public final class App {
                 break;
             }
         }
-        nfaTuple.setAcceptingStates(Integer.toString(nfaTuple.getState()));
 
         System.out.println("\nDELTA3: ");
         printArrayList(nfaTuple.getDelta());

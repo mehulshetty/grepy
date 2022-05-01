@@ -11,7 +11,7 @@ public class FiveTuple {
     private static ArrayList<Character> alphabet = new ArrayList<Character>();
     private ArrayList<String[]> delta = new ArrayList<String[]>();
     private Integer startState = 0;
-    private String acceptingStates;
+    private String acceptingStates = "0";
 
     public FiveTuple (String fileName) {
         this.setAlphabet(fileName);
