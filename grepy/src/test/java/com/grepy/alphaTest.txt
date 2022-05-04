@@ -6,3 +6,8 @@ bbbbb
 nj
 k
 aabb
+aba
+bab
+abaababab
+aaaabnbnbn
+aaaaabbbbb

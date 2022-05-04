@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 public final class App {
     private App() {
@@ -268,7 +269,7 @@ public final class App {
         nfaTuple.setStartState(nfaTuple.getState().toString());
 
         int count = 0;
-        int openBracket = -1;
+        Stack<Integer> openBracket = new Stack<Integer>();
 
         while(true) {
             if(count != regex.length()) {
@@ -347,10 +348,11 @@ public final class App {
 
                 // Handles the open bracket
                 if(currentLetter == '(') {
-                    openBracket = nfaTuple.getState();
+                    Integer openBracketNum = nfaTuple.getState();
                     if(regex.charAt(count + 2) == '+') {
-                        openBracket += 2;
+                        openBracketNum += 2;
                     }
+                    openBracket.push(openBracketNum);
                     // System.out.println("\n(");
                 }
 
@@ -358,10 +360,12 @@ public final class App {
                 if(currentLetter == ')') {
                     if(regex.charAt(count + 1) == '*') {
                         Integer currentState = nfaTuple.getState();
-                        String[] deltaItem1 = {Integer.toString(currentState), "eps", Integer.toString(openBracket)};
+                        String[] deltaItem1 = {Integer.toString(currentState), "eps", Integer.toString(openBracket.peek())};
                         nfaTuple.setDelta(deltaItem1);
+                        String[] deltaItem2 = {Integer.toString(openBracket.peek()), "eps", Integer.toString(currentState)};
+                        nfaTuple.setDelta(deltaItem2);
                         count++;
-                        nfaTuple.setAcceptingStates(Integer.toString(openBracket));
+                        nfaTuple.setAcceptingStates(Integer.toString(openBracket.pop()));
                     }
                     // System.out.println("\n)");
                 }
