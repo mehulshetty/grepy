@@ -1,6 +1,9 @@
 package com.grepy;
 import java.util.ArrayList;
 
+/**
+ * A Five Tuple for a DFA
+ */
 public class DFA {
     private String state;
     private String stateTracker = "0";

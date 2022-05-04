@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+/**
+ * A Five Tuple for a NFA
+ */
 public class FiveTuple {
     private Integer state = 0;
     private String stateTracker = "0";
