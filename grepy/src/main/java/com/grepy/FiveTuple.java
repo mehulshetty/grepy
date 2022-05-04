@@ -9,7 +9,6 @@ import java.util.Iterator;
  */
 public class FiveTuple {
     private Integer state = 0;
-    private String stateTracker = "0";
 
     private static ArrayList<Character> alphabet = new ArrayList<Character>();
     private ArrayList<String[]> delta = new ArrayList<String[]>();
@@ -49,21 +48,12 @@ public class FiveTuple {
     }
     public void setStartState(String startState) {
         this.startState = Integer.parseInt(startState);
-        setStateTracker(startState);
     }
     public String getAcceptingStates() {
         return acceptingStates;
     }
     public void setAcceptingStates(String acceptingState) {
         this.acceptingStates = acceptingState;
-    }
-
-    public String getStateTracker() {
-        return stateTracker;
-    }
-
-    public void setStateTracker(String stateTracker) {
-        this.stateTracker = stateTracker;
     }
 
     public void removeDelta(String[] remElem) {

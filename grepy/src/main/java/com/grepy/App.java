@@ -38,7 +38,7 @@ public final class App {
 
         // DFA Output File
         try {
-            System.out.println(args[2]);
+            // System.out.println(args[2]);
 
             if(!args[2].equals("none")) {
                 // Creates a file with the DFA outputted in the DOT format
@@ -51,7 +51,7 @@ public final class App {
 
         // NFA Output File
         try {
-            System.out.println(args[3]);
+            // System.out.println(args[3]);
 
             if(!args[3].equals("none")) {
                 // Creates a file with the NFA outputted in the DOT format
@@ -147,9 +147,9 @@ public final class App {
                         String stateToCheck = nextStates.get(j);
                         String[] newEpsilonStates = epsilonStates(stateToCheck, nfaTuple);
                         if(newEpsilonStates != null) {
-                            System.out.println("\nRepeat");
+                            // System.out.println("\nRepeat");
                             for(String newEpsilonState: newEpsilonStates) {
-                                System.out.println("\nKLKL" + nextStates.toString() + " " + newEpsilonState);
+                                // System.out.println("\nKLKL" + nextStates.toString() + " " + newEpsilonState);
                                 if(!nextStates.contains(newEpsilonState)) {
                                     nextStates.add(newEpsilonState);
                                 }
@@ -166,7 +166,7 @@ public final class App {
                     String nextStateString = String.join(",", nextStatesArray);
 
 
-                    System.out.println("\nHERE" + Arrays.toString(nextStatesArray));
+                    // System.out.println("\nHERE" + Arrays.toString(nextStatesArray));
 
                     String[] deltaData = {currentState, alphaString, nextStateString};
                     dfaTuple.setDelta(deltaData);
@@ -194,6 +194,10 @@ public final class App {
 
         }
 
+        for(String stateItem: statesList) {
+            dfaTuple.setAllStates(stateItem);
+        }
+
         // Checks if any state in the DFA is formed by one of the accepting states in the NFA, and sets it to an acceptingState if it does
         for(String stateItem: statesList) {
             String[] stateItemArray = stateItem.split(",", 0);
@@ -204,12 +208,6 @@ public final class App {
                 }
             }
         }
-
-        // System.out.println("\n YUPPP" + nfaTuple.getAcceptingStates().toString());
-
-
-        // System.out.println("\nDELTA1: ");
-        // printArrayList(dfaTuple.getDelta());
 
         return dfaTuple;
     }
@@ -428,16 +426,27 @@ public final class App {
      */
     public static void createDot(FiveTuple nfaTuple, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))))) {
-            writer.write("\"\" [shape=none]");
+
+            writer.write("node [shape=none]; start;");
             writer.newLine();
-            writer.write("\"\" [shape=circle]");
+            writer.write("node [shape=doublecircle]; " + nfaTuple.getAcceptingStates() + ";");
             writer.newLine();
-            writer.write("\"\" -> \"" + nfaTuple.getStartState() + "\"");
+            writer.write("node [shape=circle]; ");
+            String nonAcceptingStates = "";
+            for(int stateNum = 0; stateNum <= nfaTuple.getState(); stateNum++) {
+                if(stateNum != Integer.parseInt(nfaTuple.getAcceptingStates())) {
+                    nonAcceptingStates += Integer.toString(stateNum) + ", ";
+                }
+            }
+            nonAcceptingStates = nonAcceptingStates.substring(0, nonAcceptingStates.length() - 2) + ";";
+            writer.write(nonAcceptingStates);
+            writer.newLine();
+            writer.write("start -> " + nfaTuple.getStartState() + ";");
             writer.newLine();
             ArrayList<String[]> nfaDelta = nfaTuple.getDelta();
             for(int count = 0; count < nfaDelta.size(); count++) {
                 String[] deltaItem = nfaDelta.get(count);
-                writer.write("\"" + deltaItem[0] + "\" -> \"" + deltaItem[2] + "\" [label=\"" + deltaItem[1] + "\"");
+                writer.write(deltaItem[0] + " -> " + deltaItem[2] + " [label=\"" + deltaItem[1] + "\"];");
                 writer.newLine();
             }
         } catch (IOException e) {}
@@ -450,16 +459,32 @@ public final class App {
      */
     public static void createDot(DFA dfaTuple, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))))) {
-            writer.write("\"\" [shape=none]");
+            writer.write("node [shape=none]; start;");
             writer.newLine();
-            writer.write("\"\" [shape=circle]");
+            writer.write("node [shape=doublecircle]; ");
+            String acceptingStates = "";
+            for(String oneState: dfaTuple.getAcceptingStates()) {
+                acceptingStates += oneState + ", ";
+            }
+            acceptingStates = acceptingStates.substring(0, acceptingStates.length() - 2) + ";";
+            writer.write(acceptingStates);
             writer.newLine();
-            writer.write("\"\" -> \"" + dfaTuple.getStartState() + "\"");
+            writer.write("node [shape=circle]; ");
+            String nonAcceptingStates = "";
+            for(String oneState: dfaTuple.getAllStates()) {
+                if(!dfaTuple.getAcceptingStates().contains(oneState)) {
+                    nonAcceptingStates += oneState + ", ";
+                }
+            }
+            nonAcceptingStates = nonAcceptingStates.substring(0, nonAcceptingStates.length() - 2) + ";";
+            writer.write(nonAcceptingStates);
+            writer.newLine();
+            writer.write("start -> " + dfaTuple.getStartState() + ";");
             writer.newLine();
             ArrayList<String[]> dfaDelta = dfaTuple.getDelta();
             for(int count = 0; count < dfaDelta.size(); count++) {
                 String[] deltaItem = dfaDelta.get(count);
-                writer.write("\"" + deltaItem[0] + "\" -> \"" + deltaItem[2] + "\" [label=\"" + deltaItem[1] + "\"");
+                writer.write(deltaItem[0] + " -> " + deltaItem[2] + " [label=\"" + deltaItem[1] + "\"];");
                 writer.newLine();
             }
         } catch (IOException e) {}

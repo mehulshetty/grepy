@@ -6,6 +6,7 @@ import java.util.ArrayList;
  */
 public class DFA {
     private String state;
+    private ArrayList<String> allStates = new ArrayList<String>();
     private String stateTracker = "0";
     private static ArrayList<Character> alphabet = new ArrayList<Character>();
     private ArrayList<String[]> delta = new ArrayList<String[]>();
@@ -26,6 +27,14 @@ public class DFA {
 
     public String getStateTracker() {
         return stateTracker;
+    }
+
+    public ArrayList<String> getAllStates() {
+        return allStates;
+    }
+
+    public void setAllStates(String allStates) {
+        this.allStates.add(allStates);
     }
 
     public void setStateTracker(String stateTracker) {

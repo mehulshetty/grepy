@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "com.grepy.App",
             "projectName": "grepy",
-            "args": ["10*","grepy/src/test/java/com/grepy/alphaTest.txt"]
+            "args": ["ab*","grepy/src/test/java/com/grepy/alphaTest.txt", "grepy/src/test/java/com/grepy/alphaDFA.txt", "grepy/src/test/java/com/grepy/alphaNFA.txt"]
         }
     ]
 }
