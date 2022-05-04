@@ -19,10 +19,10 @@ public final class App {
     public static void main(String[] args) {
 
         // Regular Expression
-        System.out.println(args[0]);
+        System.out.println("REGEX: " + args[0]);
 
         // Input File
-        System.out.println(args[1]);
+        System.out.println("INPUT: " + args[1]);
 
         // Creates the NFA for the regex
         FiveTuple fiveTuple = new FiveTuple(args[1]);
@@ -43,6 +43,7 @@ public final class App {
             if(!args[2].equals("none")) {
                 // Creates a file with the DFA outputted in the DOT format
                 createDot(dfaTuple, args[2]);
+                System.out.println("DFA: " + args[2]);
             }
         }
         catch(ArrayIndexOutOfBoundsException e) {
@@ -56,6 +57,7 @@ public final class App {
             if(!args[3].equals("none")) {
                 // Creates a file with the NFA outputted in the DOT format
                 createDot(fiveTuple, args[3]);
+                System.out.println("NFA: " + args[3]);
             }
         }
         catch(ArrayIndexOutOfBoundsException e) {
