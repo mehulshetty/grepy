@@ -64,6 +64,11 @@ public final class App {
         catch(ArrayIndexOutOfBoundsException e) {
             System.out.println("\nNo Output NFA File");
         }
+
+        Boolean multiversePortalOpen = false;
+        if(multiversePortalOpen) {
+            MultiversePortal.enter();
+        }
         
     }
 
@@ -265,14 +270,17 @@ public final class App {
      * @param regex the regex that will be used to create the NFA
      */
     public static void regexToNFA(FiveTuple nfaTuple, String regex) {
+        regex = regex + "|";
         ArrayList<Character> alphabet = nfaTuple.getAlphabet();
         nfaTuple.setStartState(nfaTuple.getState().toString());
 
         int count = 0;
         Stack<Integer> openBracket = new Stack<Integer>();
+        Boolean plusBracket = false;
+        String plusBracketBeforeEndState = "";
 
         while(true) {
-            if(count != regex.length()) {
+            if(count != regex.length() - 1) {
                 Character currentLetter = regex.charAt(count);
 
                 // Handles non-special characters
@@ -367,7 +375,57 @@ public final class App {
                         count++;
                         nfaTuple.setAcceptingStates(Integer.toString(openBracket.pop()));
                     }
-                    // System.out.println("\n)");
+                    else if(plusBracket) {
+                        Integer currentState = nfaTuple.getState();
+                        Integer nextState = nfaTuple.nextState();
+                        String[] deltaItem1 = {plusBracketBeforeEndState, "eps", Integer.toString(nextState)};
+                        nfaTuple.setDelta(deltaItem1);
+                        String[] deltaItem2 = {Integer.toString(currentState), "eps", Integer.toString(nextState)};
+                        nfaTuple.setDelta(deltaItem2);
+
+                        nfaTuple.setAcceptingStates(Integer.toString(nextState));
+
+                        openBracket.pop();
+                        plusBracket = false;
+                    }
+                    else if(regex.charAt(count + 1) == '+') {
+                        String backAlpha = "";
+
+                        Iterator<String[]> itr = nfaTuple.getDelta().iterator();
+                        while(itr.hasNext()) {
+                            String[] itrItem = itr.next();
+                            if(itrItem[0].equals(Integer.toString(openBracket.peek()))) {
+                                if(itrItem[2].equals(Integer.toString(openBracket.peek() + 1))) {
+                                    backAlpha = itrItem[1];
+                                    break;
+                                }
+                            }
+                        }
+
+                        Integer currentState = nfaTuple.getState();
+                        String[] deltaItem1 = {Integer.toString(openBracket.peek()), "eps", Integer.toString(currentState + 1)};
+                        nfaTuple.setDelta(deltaItem1);
+                        String[] deltaItem2 = {Integer.toString(currentState + 1), backAlpha, Integer.toString(openBracket.peek() + 1)};
+                        nfaTuple.setDelta(deltaItem2);
+                        String[] deltaItem3 = {Integer.toString(openBracket.peek()), "eps", Integer.toString(currentState + 2)};
+                        nfaTuple.setDelta(deltaItem3);
+
+                        String[] remElem1 = {Integer.toString(openBracket.peek()), backAlpha, Integer.toString(openBracket.peek() + 1)};
+                        nfaTuple.removeDelta(remElem1);
+
+                        openBracket.pop();
+                        plusBracketBeforeEndState = Integer.toString(currentState);
+
+                        nfaTuple.setState(currentState + 2);
+
+                        plusBracket = true;
+
+                        count++;
+                    }
+                    else {
+                        // DO NOTHING
+                    }
+                    // System.out.println("\n)"); 
                 }
 
                 count++;
